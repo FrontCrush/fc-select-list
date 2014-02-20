@@ -2,17 +2,22 @@
 
 $.fn.fc_select_list = function(options) {
 
+  // SET VARIABLES
   var settings = $.extend({
     jQuery_animation: false,
+    allText: '',
     hover: true,
     click: false,
   }, options);
 
+  
   this.each(function() {
     // classes
     if (settings.jQuery_animation ? css3_support = 'jQuery-transition' : css3_support = 'css3-transition');
     if (settings.click ? click_support = 'click-true' : click_support = '');
     if (settings.hover ? hover_support = 'hover-true' : hover_support = 'hover-false');
+
+    var current = $(this);
     var wrapper_classes = 'fc-select-list-wrapper ' + css3_support + ' ' + hover_support + ' ' + click_support;
     var ul_classes = 'fc-select-list ';
 
@@ -20,39 +25,21 @@ $.fn.fc_select_list = function(options) {
     var opt = $(this).find('option');
     var opt_first = opt.eq(0).text();
     var select_id = 'select-' + opt_first;
-    $('<div class="' + wrapper_classes + '"><h4 class="fc-select-list-selected"><span class="selected-text"></span><span class="selected-arrow"></span></h4><ul id="' + select_id + '" class="' + ul_classes + '"></ul></div>').insertAfter(this);
+
+    var label = current.prev();
+    var label_text = label.text();
+
+    $('<div class="' + wrapper_classes + '"><h4 class="fc-select-list-selected"><span class="selected-text">' + label_text +'</span><span class="selected-arrow"></span></h4><ul id="' + select_id + '" class="' + ul_classes + '"></ul></div>').insertAfter(this);
 	   
    for (var i = 0; i < opt.length; i++) {
      $('<li class="fc-select-list-item">' + opt.eq(i).text() + '</li>').appendTo($(this).next().find('.fc-select-list'));
     }
-    $(this).hide();
+    current.hide();
   });
 
-  $(document).on('click', '.fc-select-list-item', function() {
-    var current = $(this);
-    var current_index = current.index();
-    var current_text = current.text();
-    var current_parent = current.parents('.fc-select-list-wrapper');
-    var selected = current_parent.find('.selected-text');  
-    selected.text(current_text);
-    $('.fc-select-list li').removeClass('opt-selected');	  
-    current.addClass('opt-selected');
 
-    var real_select = current_parent.prev();
-    real_select.find('option').removeAttr('selected');
-    real_select.find('option:eq("' + current_index + '")').attr('selected', 'selected');
-  });
 	
-  $('.fc-select-list-wrapper').each(function() {
-    var closest_select = $(this).prev();
-    var selected_initial = closest_select.find('option:selected').text();
-    var selected = $(this).find('.selected-text');
-    selected.text(selected_initial);
-	  
-    $(this).find('li').filter(function() {
-      return $(this).text() === selected_initial;
-     }).addClass('opt-selected');
-  });
+
 
 
   z_index(); 
@@ -87,7 +74,7 @@ $.fn.fc_select_list = function(options) {
 
       current.hover(
         function() {
-          ul.slideDown();
+          ul.not(':animated').slideDown();
         }, 
         function() {
           if (current.hasClass('fc-open')) return;
@@ -121,7 +108,33 @@ $.fn.fc_select_list = function(options) {
 
   }
 
-
 }
+
+  $(document).on('click', '.fc-select-list-item', function() {
+    var current = $(this);
+    var current_index = current.index();
+    var current_text = current.text();
+    var current_parent = current.parents('.fc-select-list-wrapper');
+    var selected = current_parent.find('.selected-text');  
+    selected.text(current_text);
+    $('.fc-select-list li').removeClass('opt-selected');	  
+    current.addClass('opt-selected');
+
+    var real_select = current_parent.prev();
+    real_select.find('option').prop('selected', false);
+    real_select.find('option:eq(' + current_index + ')').prop('selected', true);
+ console.log(current_index);
+  });
+
+  $('.fc-select-list-wrapper').each(function() {
+    var closest_select = $(this).prev();
+    var selected_initial = closest_select.find('option:selected').text();
+    var selected = $(this).find('.selected-text');
+    selected.text(selected_initial);
+	  
+    $(this).find('li').filter(function() {
+      return $(this).text() === selected_initial;
+     }).addClass('opt-selected');
+  });
 
 })(jQuery);
