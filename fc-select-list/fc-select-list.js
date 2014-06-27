@@ -36,7 +36,7 @@ $.fn.fc_select_list = function(options) {
 	   
    for (var i = 0; i < opt.length; i++) {
      if ((i == 0) && (settings.firstOptionText != '')) { 
-       $('<li class="fc-select-list-item">' + label_text + '</li>').appendTo($(this).next().find('.fc-select-list'));
+       $('<li class="fc-select-list-item">' + settings.firstOptionText + '</li>').appendTo($(this).next().find('.fc-select-list'));
      } else {
        $('<li class="fc-select-list-item">' + opt.eq(i).text() + '</li>').appendTo($(this).next().find('.fc-select-list'));
      }
