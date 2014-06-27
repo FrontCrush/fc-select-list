@@ -5,7 +5,8 @@ $.fn.fc_select_list = function(options) {
   // SET VARIABLES
   var settings = $.extend({
     jQuery_animation: false,
-    allText: '',
+    firstOptionLabel: false,
+    firstOptionText: '',
     hover: true,
     click: false,
   }, options);
@@ -17,6 +18,7 @@ $.fn.fc_select_list = function(options) {
     if (settings.click ? click_support = 'click-true' : click_support = '');
     if (settings.hover ? hover_support = 'hover-true' : hover_support = 'hover-false');
 
+
     var current = $(this);
     var wrapper_classes = 'fc-select-list-wrapper ' + css3_support + ' ' + hover_support + ' ' + click_support;
     var ul_classes = 'fc-select-list ';
@@ -26,15 +28,24 @@ $.fn.fc_select_list = function(options) {
     var opt_first = opt.eq(0).text();
     var select_id = 'select-' + opt_first;
 
-    var label = current.prev();
-    var label_text = label.text();
+    // text replacement
+    var label_text;
+    if (settings.firstOptionText == '' ? label_text = current.prev().text() : opt_first = settings.firstOptionText );
 
-    $('<div class="' + wrapper_classes + '"><h4 class="fc-select-list-selected"><span class="selected-text">' + label_text +'</span><span class="selected-arrow"></span></h4><ul id="' + select_id + '" class="' + ul_classes + '"></ul></div>').insertAfter(this);
+    $('<div class="' + wrapper_classes + '"><h4 class="fc-select-list-selected"><span class="selected-text">' + opt_first + '</span><span class="selected-arrow"></span></h4><ul id="' + select_id + '" class="' + ul_classes + '"></ul></div>').insertAfter(this);
 	   
    for (var i = 0; i < opt.length; i++) {
-     $('<li class="fc-select-list-item">' + opt.eq(i).text() + '</li>').appendTo($(this).next().find('.fc-select-list'));
-    }
+     if ((i == 0) && (settings.firstOptionText != '')) { 
+       $('<li class="fc-select-list-item">' + label_text + '</li>').appendTo($(this).next().find('.fc-select-list'));
+     } else {
+       $('<li class="fc-select-list-item">' + opt.eq(i).text() + '</li>').appendTo($(this).next().find('.fc-select-list'));
+     }
+   }
     current.hide();
+
+
+
+ 
   });
 
 
@@ -49,6 +60,8 @@ $.fn.fc_select_list = function(options) {
   if (settings.click) { 
     click_slideDown();
   }
+
+
 
   function z_index() {
     $('.fc-select-list-wrapper').each(function() {
@@ -102,9 +115,6 @@ $.fn.fc_select_list = function(options) {
       
       //ul.slideUp();
     });
-
-
- 
 
   }
 
